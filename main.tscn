@@ -1,0 +1,101 @@
+[gd_scene load_steps=11 format=3 uid="uid://cvof31qg5ukca"]
+
+[ext_resource type="Texture2D" uid="uid://d0neyimu7qp4" path="res://icon.svg" id="1_24cpe"]
+[ext_resource type="Script" path="res://main_script.gd" id="1_bcjfg"]
+[ext_resource type="Script" path="res://scripts/ball.gd" id="1_m5gf5"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="2_kynmc"]
+[ext_resource type="Script" path="res://scripts/aipaddle.gd" id="4_48jru"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tltyw"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ydym1"]
+radius = 14.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_868sg"]
+size = Vector2(14, 86)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_4k1xl"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_tqbaq"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_bcjfg")
+
+[node name="ball" type="CharacterBody2D" parent="."]
+position = Vector2(512, 288)
+script = ExtResource("1_m5gf5")
+
+[node name="Sprite2D" type="Sprite2D" parent="ball"]
+scale = Vector2(0.183594, 0.183594)
+texture = ExtResource("1_24cpe")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ball"]
+shape = SubResource("CircleShape2D_tltyw")
+
+[node name="collision_area" type="Area2D" parent="ball"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ball/collision_area"]
+shape = SubResource("CircleShape2D_ydym1")
+
+[node name="player" type="CharacterBody2D" parent="." groups=["Paddles"]]
+position = Vector2(90, 288)
+script = ExtResource("2_kynmc")
+
+[node name="Sprite2D" type="Sprite2D" parent="player"]
+scale = Vector2(0.109375, 0.671875)
+texture = ExtResource("1_24cpe")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player"]
+shape = SubResource("RectangleShape2D_868sg")
+metadata/_edit_lock_ = true
+
+[node name="aipaddle" type="CharacterBody2D" parent="." groups=["Paddles"]]
+position = Vector2(934, 288)
+script = ExtResource("4_48jru")
+reaction_time = 0.4
+
+[node name="Sprite2D" type="Sprite2D" parent="aipaddle"]
+scale = Vector2(0.109375, 0.671875)
+texture = ExtResource("1_24cpe")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="aipaddle"]
+shape = SubResource("RectangleShape2D_868sg")
+metadata/_edit_lock_ = true
+
+[node name="winning_area" type="Node2D" parent="."]
+
+[node name="win_ai" type="Area2D" parent="winning_area" groups=["Winning Areas"]]
+position = Vector2(15, 253)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="winning_area/win_ai"]
+rotation = 1.5708
+shape = SubResource("WorldBoundaryShape2D_4k1xl")
+
+[node name="win_human" type="Area2D" parent="winning_area" groups=["Winning Areas"]]
+position = Vector2(1009, 253)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="winning_area/win_human"]
+rotation = -1.5708
+shape = SubResource("WorldBoundaryShape2D_tqbaq")
+
+[node name="player_score" type="Label" parent="."]
+offset_left = 28.0
+offset_top = 23.0
+offset_right = 132.0
+offset_bottom = 46.0
+text = "Human Score"
+
+[node name="ai_score" type="Label" parent="."]
+offset_left = 881.0
+offset_top = 23.0
+offset_right = 985.0
+offset_bottom = 46.0
+text = "AI Score"
+
+[connection signal="body_shape_entered" from="ball/collision_area" to="ball" method="_on_collision_area_body_shape_entered"]
+[connection signal="body_shape_exited" from="ball/collision_area" to="ball" method="_on_collision_area_body_shape_exited"]
+[connection signal="body_entered" from="winning_area/win_ai" to="ball" method="_on_win_ai_body_entered"]
+[connection signal="body_entered" from="winning_area/win_human" to="ball" method="_on_win_human_body_entered"]
